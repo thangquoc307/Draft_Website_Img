@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>thangquoc.com</title>
+    <title>thangquoctitle.com</title>
     <style>
         button.sign{
             width: 135px;
@@ -111,7 +111,7 @@
             border: black solid 1px;
             border-radius: 20px;
         }
-        #closeZoom:hover{
+        #closeZoom:hover, #backPic:hover, #forwardPic:hover{
             scale: 1.3;
         }
     </style>
@@ -583,8 +583,8 @@
         }
         let linkInput = link.match(/^.*\//).toString();
         linkInput = linkInput.substring(0, linkInput.length - 1);
-        let index = arrTitle.indexOf(linkInput);
-        let linkList = arrImg[index];
+        let indexTitle = arrTitle.indexOf(linkInput);
+        let linkList = arrImg[indexTitle];
 
         let width = 400;
         let height = 250;
@@ -713,7 +713,9 @@ function zoomPicture(link){
     let pngLink = changePng(link);
 
     data = `<img id="pictureFix" src="img/${pngLink}">
-            <img onclick="closeZoomPicture()" id="closeZoom" style="position: fixed; top: 5%; left: 95%" src="symbol/close.png" height="48" width="48"/>`
+            <img onclick="closeZoomPicture()" id="closeZoom" style="position: fixed; top: 5%; left: 95%" src="symbol/close.png" height="48" width="48"/>
+            <img onclick="movePicture(-1, '${link}')" id="backPic" style="position: fixed; top: 50%; left: 2%" src="symbol/back.png" height="48" width="48"/>
+            <img onclick="movePicture(1, '${link}')" id="forwardPic" style="position: fixed; top: 50%; left: 96%" src="symbol/forward.png" height="48" width="48"/>`
 
     let ele = document.getElementById("zoomPicture");
     ele.innerHTML = data;
@@ -730,6 +732,23 @@ function changePng(test){
         newLink += test[i];
     }
     return newLink + "png"
+}
+function movePicture(step, link){
+    let index = -1;
+    let i;
+    for (i = 0; i < arrImg.length; i++){
+        index = arrImg[i].indexOf(link);
+        if (index != -1){
+            break;
+        }
+    }
+    let newIndex = index + step;
+    if(newIndex < 0 || newIndex > arrImg[i].length){
+        newIndex = index;
+    }
+    let newLink = arrImg[i][newIndex];
+    // alert(index)
+    zoomPicture(newLink);
 }
 </script>
 </body>
