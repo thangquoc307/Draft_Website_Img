@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>thangquoctitle.com</title>
+    <style>
+        button.sign{
+            width: 135px;
+            height: 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            background-color: lightgrey;
+            color: black;
+            transition-duration: 300ms;
+            border: none;
+        }
+        button.sign:hover{
+            background-color: darkgrey;
+            color: white;
+            transition-duration: 300ms;
+            scale: 1.1;
+        }
+        .web:hover{
+            scale: 1.3;
+            transition-duration: 300ms;
+        }
+        .web{
+            transition-duration: 300ms;
+        }
+        .logo{
+            transition-duration: 300ms;
+            border-radius: 25px;
+            margin-left: 20px;
+            padding-right: 15px;
+        }
+        .logo:hover{
+            transition-duration: 300ms;
+            scale: 1.2;
+            filter: invert(100%);
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        @font-face {
+            font-family: fontCustom;
+            src: url("font/ConcertOne-Regular.ttf");
+        }
+        td.picBox{
+            margin: 20px;
+            background-color: rgba(150, 150, 150, 0.3);
+            vertical-align: top;
+            padding-top: 30px;
+            border: white solid 5px;
+            border-radius: 40px;
+            transition-duration: 300ms;
+            color: rgba(0, 0, 0, 0.7);
+            /*box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1), 0px 2px 4px rgba(0, 0, 0, 0.2);*/
+        }
+        td.picBox:hover{
+            background-color: rgba(0, 0, 0, 0.7);
+            transition-duration: 300ms;
+            border-radius: 20px;
+            color: white;
+        }
+        img.picInBox{
+            border-radius: 40px;
+            text-align: center;
+            transition-duration: 300ms;
+        }
+        td.picBox:hover .picInBox{
+            scale: 1.05;
+            transition-duration: 300ms;
+            border-radius: 10px;
+        }
+        .textDecription{
+            padding-left: 30px;
+            font-size: 20px;
+        }
+        .buttonFilter{
+            color: white;
+            background-color: rgba(0, 0, 0 ,0.4);
+            width: 150px;
+            height: 50px;
+            border-radius: 25px;
+            margin: 20px;
+            font-size: 20px;
+            border: none;
+        }
+        .buttonFilter:hover{
+            scale: 1.1;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+        }
+        #zoomPicture{
+            position: fixed;
+            border: black 1px solid;
+            margin: 20px;
+            padding: 50px;
+            top: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 92%;
+            height: 85%;
+            display: none;
+            border-radius: 20px;
+        }
+        #pictureFix{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90%;
+            border: black solid 1px;
+            border-radius: 20px;
+        }
+        #closeZoom:hover, #backPic:hover, #forwardPic:hover{
+            scale: 1.3;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center">
+    <div id="header" style="height: 100px">
+        <table width="100%">
+            <tr style="height: 100px">
+                <th style="text-align: left"><img onclick="tablePicture('')" src="symbol/logo.png" class="logo" height="70" style="padding-left: 15px"/></th>
+                <th width="3%"><a href="https://www.google.com.vn/?hl=vi" target="_blank"><img src="symbol/google.png" height="40" width="40" class="web"></a></th>
+                <th width="3%"><a href="https://www.facebook.com/ssaphie/" target="_blank"><img src="symbol/facebook.png" height="40" width="40" class="web"></a></th>
+                <th width="3%"><a href="https://www.youtube.com/channel/UCmR8j8wwckfgKshBA6HdsBQ" target="_blank"><img src="symbol/youtube.png" height="40" width="40" class="web"></a></th>
+                <th width="8%"><button class="sign">Sign up</button></th>
+                <th width="8%"><button class="sign">Login</button></th>
+            </tr>
+        </table>
+    </div>
+    <div style="width: 100%" id="filterNation"></div>
+    <div><table id="tablePicture" style="width: 100%"></table></div>
+    <div id="zoomPicture"></div>
+</div>
+<script>
+    let arrImg =
+        [
+            [
+                "/VN_VucSong/0.webp",
+                "/VN_VucSong/20190224_084843.webp",
+                "/VN_VucSong/20190224_093806.webp",
+                "/VN_VucSong/20190224_093848.webp",
+                "/VN_VucSong/20190224_101656.webp",
+                "/VN_VucSong/20190224_101913.webp",
+                "/VN_VucSong/20190224_151350.webp",
+                "/VN_VucSong/20190224_151432.webp",
+                "/VN_VucSong/20190224_152535.webp",
+                "/VN_VucSong/20190224_154948.webp",
+                "/VN_VucSong/20190224_172253.webp",
+                "/VN_VucSong/20190224_172301.webp",
+                "/VN_VucSong/20190224_172416.webp"
+            ],
+            [
+                "/VN_Vinh_Xuan_Dai/0.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_082119.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_083424.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_084759.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_104704.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_104927.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_105112.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_124811.webp",
+                "/VN_Vinh_Xuan_Dai/20190120_125002.webp"
+            ],
+            [
+                "/VN_VanHoa/0.webp",
+                "/VN_VanHoa/11181209_091730.webp",
+                "/VN_VanHoa/12181209_104100.webp",
+                "/VN_VanHoa/13181209_143128(0).webp",
+                "/VN_VanHoa/14181209_084325.webp",
+                "/VN_VanHoa/15181209_151510.webp",
+                "/VN_VanHoa/20181007_075116.webp",
+                "/VN_VanHoa/20181007_084422(0).webp",
+                "/VN_VanHoa/20181007_084549(0).webp",
+                "/VN_VanHoa/20181007_090713.webp",
+                "/VN_VanHoa/20181007_091121.webp",
+                "/VN_VanHoa/20181007_091359.webp",
+                "/VN_VanHoa/20181007_091915.webp",
+                "/VN_VanHoa/20181209_084902.webp",
+                "/VN_VanHoa/20181209_092154.webp",
+                "/VN_VanHoa/20181209_101319.webp",
+                "/VN_VanHoa/20181209_133625.webp",
+                "/VN_VanHoa/20181209_151557.webp"
+            ],
+            [
+                "/VN_ThapNhan/0.webp",
+                "/VN_ThapNhan/20181007_203108.webp"
+            ],
+            [
+                "/VN_SongHinh/0.webp",
+                "/VN_SongHinh/120181216_105528.webp",
+                "/VN_SongHinh/20181216_092334.webp",
+                "/VN_SongHinh/20181216_093033.webp",
+                "/VN_SongHinh/20181216_105420.webp",
+                "/VN_SongHinh/20181216_105609.webp",
+                "/VN_SongHinh/20181216_125314.webp",
+                "/VN_SongHinh/20181216_131200.webp",
+                "/VN_SongHinh/20181216_173459.webp"
+            ],
+            [
+                "/VN_PhuYen/0.webp",
+                "/VN_PhuYen/20181104_155013.webp",
+                "/VN_PhuYen/20181104_161807.webp",
+                "/VN_PhuYen/20181104_163755.webp",
+                "/VN_PhuYen/20181104_164724.webp",
+                "/VN_PhuYen/20181104_164832.webp",
+                "/VN_PhuYen/20181104_164857.webp",
+                "/VN_PhuYen/20181104_164907.webp",
+                "/VN_PhuYen/B612_20181104_160545_427.webp"
+            ],
+            [
+                "/VN_PhuQuoc/0.webp",
+                "/VN_PhuQuoc/20191017_0850213.webp",
+                "/VN_PhuQuoc/20191017_085023.webp",
+                "/VN_PhuQuoc/20191018_075516.webp",
+                "/VN_PhuQuoc/20191020_180850.webp",
+                "/VN_PhuQuoc/20191024_074811.webp",
+                "/VN_PhuQuoc/20191024_074827.webp",
+                "/VN_PhuQuoc/20191024_075241.webp",
+                "/VN_PhuQuoc/20191030_212114.webp",
+                "/VN_PhuQuoc/20191030_215953.webp",
+                "/VN_PhuQuoc/20191103_155022.webp",
+                "/VN_PhuQuoc/20191103_155024.webp",
+                "/VN_PhuQuoc/20191103_210035.webp",
+                "/VN_PhuQuoc/20191105_220250.webp",
+                "/VN_PhuQuoc/20191108_190300.webp",
+                "/VN_PhuQuoc/20191110_172637.webp",
+                "/VN_PhuQuoc/20191112_140833.webp",
+                "/VN_PhuQuoc/20191112_142207.webp",
+                "/VN_PhuQuoc/20191112_142423.webp",
+                "/VN_PhuQuoc/20191112_142513.webp",
+                "/VN_PhuQuoc/20191112_144312.webp",
+                "/VN_PhuQuoc/20191113_184510.webp",
+                "/VN_PhuQuoc/20191114_075559.webp",
+                "/VN_PhuQuoc/20191117_153252.webp",
+                "/VN_PhuQuoc/20191117_154430.webp",
+                "/VN_PhuQuoc/20191117_1544310.webp",
+                "/VN_PhuQuoc/20191117_1544320.webp"
+            ],
+            [
+                "/VN_NuiDaBia/0.webp",
+                "/VN_NuiDaBia/20181125_081317.webp",
+                "/VN_NuiDaBia/20181125_081752.webp",
+                "/VN_NuiDaBia/20181125_084219.webp",
+                "/VN_NuiDaBia/20181125_091743.webp",
+                "/VN_NuiDaBia/20181125_091747.webp",
+                "/VN_NuiDaBia/20181125_092910.webp",
+                "/VN_NuiDaBia/20181125_093844.webp",
+                "/VN_NuiDaBia/20181125_101916.webp",
+                "/VN_NuiDaBia/20181125_113940.webp"
+            ],
+            [
+                "/VN_HonYen/0.webp",
+                "/VN_HonYen/20190210_133515.webp",
+                "/VN_HonYen/20190210_133554.webp",
+                "/VN_HonYen/20190210_133803.webp",
+                "/VN_HonYen/20190210_145427.webp",
+                "/VN_HonYen/20190217_153747.webp"
+            ],
+            [
+                "/VN_HonChua/0.webp",
+                "/VN_HonChua/20190106_082727.webp",
+                "/VN_HonChua/20190106_082740.webp",
+                "/VN_HonChua/20190106_082758.webp",
+                "/VN_HonChua/20190106_082854.webp",
+                "/VN_HonChua/20190106_082933.webp",
+                "/VN_HonChua/20190106_085501.webp",
+                "/VN_HonChua/20190106_085524.webp",
+                "/VN_HonChua/20190106_090320.webp"
+            ],
+            [
+                "/VN_HCM/20210501_084644.webp",
+                "/VN_HCM/DSC02755.webp",
+                "/VN_HCM/DSC02760.webp",
+                "/VN_HCM/DSC02778.webp",
+                "/VN_HCM/DSC02779.webp",
+                "/VN_HCM/DSC02802.webp",
+                "/VN_HCM/DSC02866.webp",
+                "/VN_HCM/DSC028661.webp",
+                "/VN_HCM/DSC02868.webp",
+                "/VN_HCM/DSC028681.webp",
+                "/VN_HCM/DSC02882.webp",
+                "/VN_HCM/DSC02930.webp",
+                "/VN_HCM/DSC02938.webp",
+                "/VN_HCM/DSC02945.webp"
+            ],
+            [
+                "/VN_GiaLai/0.webp",
+                "/VN_GiaLai/20190126_103756.webp",
+                "/VN_GiaLai/20190126_110123.webp",
+                "/VN_GiaLai/20190126_111711.webp",
+                "/VN_GiaLai/20190126_151008.webp",
+                "/VN_GiaLai/20190126_160708.webp",
+                "/VN_GiaLai/20190126_161012.webp",
+                "/VN_GiaLai/20190126_161505.webp",
+                "/VN_GiaLai/20190126_175443.webp",
+                "/VN_GiaLai/20190126_180319.webp",
+                "/VN_GiaLai/20190127_072423.webp",
+                "/VN_GiaLai/20190127_095425.webp",
+                "/VN_GiaLai/20190127_095724.webp",
+                "/VN_GiaLai/20190127_100012.webp",
+                "/VN_GiaLai/20190127_101142.webp",
+                "/VN_GiaLai/20190127_101359.webp",
+                "/VN_GiaLai/20190127_101403.webp",
+                "/VN_GiaLai/20190127_101656.webp",
+                "/VN_GiaLai/20190127_102642.webp",
+                "/VN_GiaLai/20190127_103940.webp",
+                "/VN_GiaLai/20190127_104058.webp",
+                "/VN_GiaLai/20190127_104215.webp",
+                "/VN_GiaLai/20190127_104413.webp",
+                "/VN_GiaLai/20190127_104505.webp",
+                "/VN_GiaLai/20190127_104535.webp",
+                "/VN_GiaLai/20190127_104707.webp",
+                "/VN_GiaLai/20190127_104836.webp",
+                "/VN_GiaLai/20190127_104956.webp",
+                "/VN_GiaLai/20190127_105148.webp",
+                "/VN_GiaLai/20190127_105353.webp",
+                "/VN_GiaLai/20190127_120835.webp",
+                "/VN_GiaLai/20190127_120852.webp",
+                "/VN_GiaLai/20190127_120908.webp",
+                "/VN_GiaLai/20190127_121019.webp",
+                "/VN_GiaLai/20190127_121152.webp",
+                "/VN_GiaLai/20190127_121347.webp",
+                "/VN_GiaLai/20190127_121607.webp",
+                "/VN_GiaLai/20190127_121928.webp",
+                "/VN_GiaLai/20190127_122035.webp",
+                "/VN_GiaLai/20190127_150519.webp",
+                "/VN_GiaLai/20190127_153221.webp",
+                "/VN_GiaLai/20190127_153514.webp",
+                "/VN_GiaLai/20190127_153550.webp",
+                "/VN_GiaLai/20190127_153848.webp",
+                "/VN_GiaLai/20190127_154251.webp",
+                "/VN_GiaLai/20190127_154459.webp",
+                "/VN_GiaLai/20190127_160454.webp",
+                "/VN_GiaLai/20190127_163254.webp",
+                "/VN_GiaLai/20190127_163351.webp",
+                "/VN_GiaLai/20190127_163352.webp",
+                "/VN_GiaLai/20190127_163548.webp",
+                "/VN_GiaLai/20190127_163618.webp",
+                "/VN_GiaLai/20190127_174405.webp",
+                "/VN_GiaLai/20190128_072925.webp"
+            ],
+            [
+                "/VN_GanhDaDia/0.webp",
+                "/VN_GanhDaDia/20181021_105553.webp",
+                "/VN_GanhDaDia/20181021_112441.webp",
+                "/VN_GanhDaDia/20181021_112544.webp",
+                "/VN_GanhDaDia/20181021_112622.webp",
+                "/VN_GanhDaDia/20181021_112756.webp",
+                "/VN_GanhDaDia/20181021_112856.webp",
+                "/VN_GanhDaDia/20181021_112916.webp",
+                "/VN_GanhDaDia/20181021_113119.webp",
+                "/VN_GanhDaDia/20181021_113203.webp",
+                "/VN_GanhDaDia/20181021_113510.webp",
+                "/VN_GanhDaDia/20181021_113804.webp",
+                "/VN_GanhDaDia/20181021_113851.webp",
+                "/VN_GanhDaDia/20181021_113957.webp",
+                "/VN_GanhDaDia/20181021_114332.webp",
+                "/VN_GanhDaDia/20181021_122216.webp",
+                "/VN_GanhDaDia/20181021_122957.webp"
+            ],
+            [
+                "/VN_DiepSon/0.webp",
+                "/VN_DiepSon/20190414_103637.webp",
+                "/VN_DiepSon/20190414_103721.webp",
+                "/VN_DiepSon/20190414_104528.webp",
+                "/VN_DiepSon/20190414_105434.webp",
+                "/VN_DiepSon/20190414_105637.webp",
+                "/VN_DiepSon/20190414_132530.webp",
+                "/VN_DiepSon/20190414_134648.webp"
+            ],
+            [
+                "/VN_DaNang/0.webp",
+                "/VN_DaNang/08A99971-0833-4E30-9F3D-5F1CB2B3DD68.webp",
+                "/VN_DaNang/1ACD6A8A-B84E-4DF5-9190-675743FF8FBD.webp",
+                "/VN_DaNang/1ACD6A8A-B84E-4DF5-9190-675743FF8FBD111.webp",
+                "/VN_DaNang/A71D10BF-B393-411C-A3E3-0161F5FD0146.webp",
+                "/VN_DaNang/IMG_8272.webp",
+                "/VN_DaNang/IMG_8326.webp",
+                "/VN_DaNang/IMG_8367.webp",
+                "/VN_DaNang/IMG_8411.webp",
+                "/VN_DaNang/IMG_8426.webp",
+                "/VN_DaNang/IMG_8431.webp",
+                "/VN_DaNang/IMG_8455.webp",
+                "/VN_DaNang/IMG_8740.webp",
+                "/VN_DaNang/IMG_8742.webp",
+                "/VN_DaNang/IMG_8750.webp",
+                "/VN_DaNang/IMG_8754.webp",
+                "/VN_DaNang/IMG_8757.webp",
+                "/VN_DaNang/IMG_8777.webp",
+                "/VN_DaNang/IMG_8789.webp",
+                "/VN_DaNang/IMG_8799.webp",
+                "/VN_DaNang/IMG_8811.webp",
+                "/VN_DaNang/IMG_8821.webp",
+                "/VN_DaNang/IMG_8827.webp",
+                "/VN_DaNang/IMG_8830.webp",
+                "/VN_DaNang/IMG_8836.webp",
+                "/VN_DaNang/IMG_8838.webp"
+            ],
+            [
+                "/VN_DamMon/0.webp",
+                "/VN_DamMon/20181202_092841.webp",
+                "/VN_DamMon/20181202_102007(0).webp",
+                "/VN_DamMon/20181202_102249.webp",
+                "/VN_DamMon/20181202_104556.webp",
+                "/VN_DamMon/20181202_104602.webp",
+                "/VN_DamMon/20181202_104612.webp",
+                "/VN_DamMon/20181202_110606.webp",
+                "/VN_DamMon/20181202_110734.webp",
+                "/VN_DamMon/20181202_140906.webp",
+                "/VN_DamMon/20181202_152726.webp",
+                "/VN_DamMon/20181202_152910.webp",
+                "/VN_DamMon/2b6247528f336c6d3522.webp",
+                "/VN_DamMon/2eb488cd49acaaf2f3bd.webp",
+                "/VN_DamMon/9562a0226143821ddb52.webp",
+                "/VN_DamMon/abf9e2112b70c82e9161.webp",
+                "/VN_DamMon/b34da88361e282bcdbf3.webp"
+            ],
+            [
+                "/VN_DakLak/0.webp",
+                "/VN_DakLak/20190824_151255.webp",
+                "/VN_DakLak/20190824_155530.webp",
+                "/VN_DakLak/20190824_155549.webp",
+                "/VN_DakLak/20190824_191115.webp",
+                "/VN_DakLak/20190825_104038.webp",
+                "/VN_DakLak/20190825_110009.webp",
+                "/VN_DakLak/20190825_135053.webp",
+                "/VN_DakLak/20190825_135251.webp",
+                "/VN_DakLak/20190825_170613.webp"
+            ],
+            [
+                "/VN_DaiLanh/0.webp",
+                "/VN_DaiLanh/20181014_094202.webp",
+                "/VN_DaiLanh/20181014_095023.webp",
+                "/VN_DaiLanh/20181014_095029.webp",
+                "/VN_DaiLanh/20181014_102529.webp",
+                "/VN_DaiLanh/20181014_102826.webp",
+                "/VN_DaiLanh/20181014_105610.webp",
+                "/VN_DaiLanh/20181014_105842.webp",
+                "/VN_DaiLanh/20181014_110035.webp",
+                "/VN_DaiLanh/20181014_110937.webp",
+                "/VN_DaiLanh/20181014_111329.webp",
+                "/VN_DaiLanh/20181014_112820.webp",
+                "/VN_DaiLanh/20181021_171813.webp",
+                "/VN_DaiLanh/20181021_172912.webp",
+                "/VN_DaiLanh/20181021_174918.webp"
+            ],
+            [
+                "/VN_BinhDinh/0.webp",
+                "/VN_BinhDinh/20181130_092405.webp",
+                "/VN_BinhDinh/20181130_094038.webp",
+                "/VN_BinhDinh/20181130_105843.webp",
+                "/VN_BinhDinh/20181130_110035.webp",
+                "/VN_BinhDinh/20181130_113527.webp",
+                "/VN_BinhDinh/20181130_113658.webp",
+                "/VN_BinhDinh/20181130_113717.webp",
+                "/VN_BinhDinh/20181130_113849.webp",
+                "/VN_BinhDinh/20181130_113909.webp",
+                "/VN_BinhDinh/20181130_114041.webp",
+                "/VN_BinhDinh/20181130_114124.webp",
+                "/VN_BinhDinh/20181130_114253.webp",
+                "/VN_BinhDinh/20181130_120705.webp",
+                "/VN_BinhDinh/20181130_142126.webp"
+            ],
+            [
+                "/VN_BaiXep/0.webp",
+                "/VN_BaiXep/20181007_143530(0).webp",
+                "/VN_BaiXep/20181007_144511.webp",
+                "/VN_BaiXep/20181007_145138.webp",
+                "/VN_BaiXep/20181007_145909.webp",
+                "/VN_BaiXep/20181007_150001.webp"
+            ],
+            [
+                "/KO_Incheon/0.webp",
+                "/KO_Incheon/Sequence 01.00_13_17_28.Still047.webp",
+                "/KO_Incheon/Sequence 01.00_15_56_01.Still042.webp",
+                "/KO_Incheon/Sequence 01.00_18_04_02.Still038.webp",
+                "/KO_Incheon/Sequence 01.00_18_25_03.Still039.webp",
+                "/KO_Incheon/Sequence 01.00_19_26_11.Still036.webp",
+                "/KO_Incheon/Sequence 01.00_19_32_18.Still037.webp",
+                "/KO_Incheon/Sequence 01.00_19_51_25.Still035.webp"
+            ],
+            [
+                "/JP_Universal/0.webp",
+                "/JP_Universal/20190501_142547.webp",
+                "/JP_Universal/20190501_142819.webp",
+                "/JP_Universal/20190501_142958.webp",
+                "/JP_Universal/20190501_143542.webp",
+                "/JP_Universal/20190501_153440.webp",
+                "/JP_Universal/20190501_165705.webp",
+                "/JP_Universal/20190501_170536.webp"
+            ],
+            [
+                "/JP_Tokyo/0.webp",
+                "/JP_Tokyo/20190428_160131.webp",
+                "/JP_Tokyo/20190428_200724.webp",
+                "/JP_Tokyo/20190428_210505.webp",
+                "/JP_Tokyo/20190429_175038.webp",
+                "/JP_Tokyo/20190429_175218.webp",
+                "/JP_Tokyo/20190429_175511.webp",
+                "/JP_Tokyo/20190429_175522.webp",
+                "/JP_Tokyo/20190429_180110.webp",
+                "/JP_Tokyo/20190429_180655.webp",
+                "/JP_Tokyo/20190430_120047.webp",
+                "/JP_Tokyo/20190430_134706.webp",
+                "/JP_Tokyo/20190430_143712.webp",
+                "/JP_Tokyo/20190430_170428.webp",
+                "/JP_Tokyo/20190430_170842.webp",
+                "/JP_Tokyo/20190430_170928.webp"
+            ],
+            [
+                "/JP_Osaka/0.webp",
+                "/JP_Osaka/20190428_162123.webp",
+                "/JP_Osaka/20190428_162157.webp",
+                "/JP_Osaka/20190428_162259.webp",
+                "/JP_Osaka/20190428_162702.webp",
+                "/JP_Osaka/20190428_163635.webp",
+                "/JP_Osaka/20190428_165255.webp",
+                "/JP_Osaka/20190428_175353.webp",
+                "/JP_Osaka/20190428_175742.webp",
+                "/JP_Osaka/20190429_155109.webp",
+                "/JP_Osaka/20190429_155310.webp",
+                "/JP_Osaka/20190429_163815.webp",
+                "/JP_Osaka/20190429_172822.webp",
+                "/JP_Osaka/20190429_172941.webp",
+                "/JP_Osaka/20190429_173053.webp",
+                "/JP_Osaka/20190429_173149.webp",
+                "/JP_Osaka/20190429_173329.webp",
+                "/JP_Osaka/20190429_173548.webp",
+                "/JP_Osaka/20190429_173708.webp",
+                "/JP_Osaka/20190429_173855.webp",
+                "/JP_Osaka/20190429_174004.webp",
+                "/JP_Osaka/20190429_174101.webp",
+                "/JP_Osaka/Sequence 01.00_01_26_38.Still011.webp"
+            ],
+            [
+                "/JP_Okinawa/0.webp",
+                "/JP_Okinawa/20190501_173427.webp",
+                "/JP_Okinawa/20190501_173509.webp",
+                "/JP_Okinawa/20190501_173839.webp",
+                "/JP_Okinawa/20190501_175624.webp",
+                "/JP_Okinawa/20190501_180537.webp",
+                "/JP_Okinawa/20190501_193630.webp"
+            ],
+            [
+                "/JP_Nara/0.webp",
+                "/JP_Nara/Sequence 01.00_03_26_01.Still001.webp",
+                "/JP_Nara/Sequence 01.00_03_38_28.Still004.webp",
+                "/JP_Nara/Sequence 01.00_03_55_05.Still002.webp"
+            ],
+            [
+                "/JP_MangaVillage/0.webp",
+                "/JP_MangaVillage/Sequence 01.00_01_14_28.Still017.webp",
+                "/JP_MangaVillage/Sequence 01.00_09_27_30.Still022.webp",
+                "/JP_MangaVillage/Sequence 01.00_09_33_02.Still023.webp",
+                "/JP_MangaVillage/Sequence 01.00_09_43_22.Still024.webp",
+                "/JP_MangaVillage/Sequence 01.00_09_59_38.Still025.webp",
+                "/JP_MangaVillage/Sequence 01.00_10_07_33.Still026.webp",
+                "/JP_MangaVillage/Sequence 01.00_10_27_37.Still027.webp",
+                "/JP_MangaVillage/Sequence 01.00_11_03_43.Still028.webp",
+                "/JP_MangaVillage/Sequence 01.00_11_28_43.Still029.webp",
+                "/JP_MangaVillage/Sequence 01.00_11_43_00.Still030.webp",
+                "/JP_MangaVillage/Sequence 01.00_12_07_16.Still032.webp",
+                "/JP_MangaVillage/Sequence 01.00_12_19_44.Still033.webp",
+                "/JP_MangaVillage/Sequence 01.00_12_38_29.Still034.webp",
+                "/JP_MangaVillage/Sequence 01.00_12_45_40.Still035.webp",
+                "/JP_MangaVillage/Sequence 01.00_15_31_15.Still039.webp",
+                "/JP_MangaVillage/Sequence 01.00_35_56_10.Still042.webp",
+                "/JP_MangaVillage/Sequence 01.00_37_27_39.Still043.webp",
+                "/JP_MangaVillage/Sequence 01.00_45_40_27.Still046.webp",
+                "/JP_MangaVillage/Sequence 01.00_47_16_17.Still047.webp",
+                "/JP_MangaVillage/Sequence 01.00_48_03_47.Still048.webp"
+            ],
+            [
+                "/JP_Kobe/0.webp",
+                "/JP_Kobe/Sequence 01.00_02_38_14.Still013.webp",
+                "/JP_Kobe/Sequence 01.00_02_57_19.Still013.webp",
+                "/JP_Kobe/Sequence 01.00_03_23_05.Still014.webp",
+                "/JP_Kobe/Sequence 01.00_05_44_26.Still017.webp",
+                "/JP_Kobe/Sequence 01.00_10_22_00.Still050.webp",
+                "/JP_Kobe/Sequence 01.00_10_23_24.Still051.webp",
+                "/JP_Kobe/Sequence 01.00_10_31_08.Still052.webp",
+                "/JP_Kobe/Sequence 01.00_10_45_04.Still045.webp",
+                "/JP_Kobe/Sequence 01.00_24_06_27.Still034.webp"
+            ],
+            [
+                "/JP_Kinkakuji/0.webp",
+                "/JP_Kinkakuji/20190502_141047.webp",
+                "/JP_Kinkakuji/20190502_141416.webp",
+                "/JP_Kinkakuji/20190502_142152.webp",
+                "/JP_Kinkakuji/20190502_143818.webp",
+                "/JP_Kinkakuji/20190502_155044.webp",
+                "/JP_Kinkakuji/20190502_155657.webp",
+                "/JP_Kinkakuji/B612_20190502_124409_145.webp"
+            ],
+            [
+                "/JP_Kabukicho/0.webp",
+                "/JP_Kabukicho/20190429_205840.webp",
+                "/JP_Kabukicho/20190429_214739.webp",
+                "/JP_Kabukicho/20190429_215121.webp",
+                "/JP_Kabukicho/20190429_222135.webp",
+                "/JP_Kabukicho/20190430_101830.webp"
+            ],
+            [
+                "/JP_Haruka/0.webp",
+                "/JP_Haruka/Sequence 01.00_00_21_21.Still009.webp",
+                "/JP_Haruka/Sequence 01.00_00_58_03.Still010.webp",
+                "/JP_Haruka/Sequence 01.00_01_24_03.Still005.webp"
+            ],
+            [
+                "/JP_Biwan/0.webp",
+                "/JP_Biwan/20190504_115418.webp",
+                "/JP_Biwan/20190504_121652.webp",
+                "/JP_Biwan/20190504_122001.webp",
+                "/JP_Biwan/20190504_122117.webp",
+                "/JP_Biwan/20190504_125121.webp",
+                "/JP_Biwan/20190504_130848.webp",
+                "/JP_Biwan/20190504_131212.webp",
+                "/JP_Biwan/20190504_134410.webp",
+                "/JP_Biwan/20190504_134526.webp",
+                "/JP_Biwan/20190504_134625.webp",
+                "/JP_Biwan/20190504_142934.webp",
+                "/JP_Biwan/20190504_144555.webp",
+                "/JP_Biwan/20190504_144948.webp",
+                "/JP_Biwan/20190504_154622.webp",
+                "/JP_Biwan/20190504_155328.webp",
+                "/JP_Biwan/20190504_155824.webp",
+                "/JP_Biwan/20190504_161513.webp",
+                "/JP_Biwan/Sequence 01.00_07_21_19.Still001.webp",
+                "/JP_Biwan/Sequence 01.00_07_28_10.Still002.webp",
+                "/JP_Biwan/Sequence 01.00_09_19_07.Still005.webp",
+                "/JP_Biwan/Sequence 01.00_12_54_36.Still006.webp",
+                "/JP_Biwan/Sequence 01.00_13_15_30.Still007.webp",
+                "/JP_Biwan/Sequence 01.00_22_55_47.Still008.webp"
+            ],
+            [
+                "/JP_Arashiyama/0.webp",
+                "/JP_Arashiyama/20190503_162450.webp",
+                "/JP_Arashiyama/Sequence 01.00_01_34_27.Still039.webp",
+                "/JP_Arashiyama/Sequence 01.00_06_09_23.Still030.webp",
+                "/JP_Arashiyama/Sequence 01.00_06_51_06.Still031.webp",
+                "/JP_Arashiyama/Sequence 01.00_06_52_21.Still033.webp",
+                "/JP_Arashiyama/Sequence 01.00_09_28_22.Still044.webp",
+                "/JP_Arashiyama/Sequence 01.00_25_47_27.Still032.webp"
+            ],
+            [
+                "/JP_Ajima/0.webp",
+                "/JP_Ajima/Sequence 01.00_00_39_20.Still015.webp",
+                "/JP_Ajima/Sequence 01.00_01_31_26.Still014.webp",
+                "/JP_Ajima/Sequence 01.00_01_54_02.Still010.webp",
+                "/JP_Ajima/Sequence 01.00_07_34_05.Still021.webp"
+            ],
+            [
+                "/CN_ChinaTown/0.webp",
+                "/CN_ChinaTown/Sequence 01.00_00_48_38.Still009.webp",
+                "/CN_ChinaTown/Sequence 01.00_02_22_19.Still011.webp"
+            ]
+        ];
+    function getInfoArrImg(link) {
+        let arrTitle = [];
+        for (let i = 0; i < arrImg.length; i++) {
+            linkRef = arrImg[i][0].match(/\/.*\//).toString();
+            linkRef = linkRef.substring(1, linkRef.length - 1);
+            arrTitle.push(linkRef);
+        }
+        let linkInput = link.match(/^.*\//).toString();
+        linkInput = linkInput.substring(0, linkInput.length - 1);
+        let indexTitle = arrTitle.indexOf(linkInput);
+        let linkList = arrImg[indexTitle];
+
+        let width = 400;
+        let height = 250;
+        let data = "";
+        for (let i = 0; i < linkList.length; i++){
+            if (i%4 == 0){
+                data += `<tr>`;
+            }
+            data += `<td class="picBox"">
+                    <table style="height: ${height}px;width: 100%" onclick="zoomPicture('${linkList[i]}')">
+                        <tr><td style="vertical-align: top"><img class="picInBox" src="img_smart/${linkList[i]}" width="${width}px"></td></tr>
+                    </table>
+                 </td>`;
+            if (i%4 == 3 || i == linkList.length - 1){
+                data += `</tr>`;
+            }
+        }
+        document.getElementById("tablePicture").innerHTML = data;
+    }
+    class Img{
+        constructor(link, nation, city) {
+            this.link = link;
+            this.nation = nation;
+            this.city = city;
+        }
+        getLink(){
+            return this.link;
+        }
+        getNation(){
+            return this.nation;
+        }
+        getCity(){
+            return this.city;
+        }
+    }
+    let totalImg = [
+        new Img('KO_Incheon/0.webp', "Korea", "Incheon"),
+        new Img('CN_ChinaTown/0.webp', "China", "China Town"),
+        new Img('JP_Nara/0.webp', "Japan", "Nara"),
+        new Img('JP_Osaka/0.webp', "Japan", "Osaka"),
+        new Img('JP_Kinkakuji/0.webp', "Japan", "Kinkakuji"),
+        new Img('JP_Arashiyama/0.webp', "Japan", "Arashiyama"),
+        new Img('JP_Biwan/0.webp', "Japan", "Biwan Lake"),
+        new Img('JP_Kabukicho/0.webp', "Japan", "Kabukicho"),
+        new Img('JP_Okinawa/0.webp', "Japan", "Okinawa"),
+        new Img('JP_Kobe/0.webp', "Japan", "Kobe"),
+        new Img('JP_Haruka/0.webp', "Japan", "Haruka"),
+        new Img('JP_Tokyo/0.webp', "Japan", "Tokyo"),
+        new Img('JP_MangaVillage/0.webp', "Japan", "MangaVillage"),
+        new Img('JP_Universal/0.webp', "Japan", "Universal"),
+        new Img('JP_Ajima/0.webp', "Japan", "Ajama"),
+        new Img('VN_BaiXep/0.webp', "VietNam", "Bãi Xép"),
+        new Img('VN_BinhDinh/0.webp', "VietNam", "Bình Định"),
+        new Img('VN_DaiLanh/0.webp', "VietNam", "Đại Lãnh"),
+        new Img('VN_DakLak/0.webp', "VietNam", "DakLak"),
+        new Img('VN_DamMon/0.webp', "VietNam", "Đầm Môn"),
+        new Img('VN_DaNang/0.webp', "VietNam", "Đà Nẵng"),
+        new Img('VN_DiepSon/0.webp', "VietNam", "Điệp Sơn"),
+        new Img('VN_GanhDaDia/0.webp', "VietNam", "Gành Đá Đĩa"),
+        new Img('VN_GiaLai/0.webp', "VietNam", "Gia Lai"),
+        new Img('VN_HonChua/0.webp', "VietNam", "Hòn Chùa"),
+        new Img('VN_HonYen/0.webp', "VietNam", "Hòn Yến"),
+        new Img('VN_NuiDaBia/0.webp', "VietNam", "Núi Đá Bia"),
+        new Img('VN_PhuQuoc/0.webp', "VietNam", "Phú Quốc"),
+        new Img('VN_PhuYen/0.webp', "VietNam", "Phú Yên"),
+        new Img('VN_SongHinh/0.webp', "VietNam", "Sông Hinh"),
+        new Img('VN_ThapNhan/0.webp', "VietNam", "Tháp Nhạn"),
+        new Img('VN_VanHoa/0.webp', "VietNam", "Vân Hòa"),
+        new Img('VN_Vinh_Xuan_Dai/0.webp', "VietNam", "Vịnh Xuân Đài"),
+        new Img('VN_VucSong/0.webp', "VietNam", "Vực Song"),
+    ];
+    let nationList = [];
+    for (let i = 0; i < totalImg.length; i++){
+        if(!nationList.includes(totalImg[i].getNation())){
+            nationList.push(totalImg[i].getNation());
+        }
+    }
+    function builtButton(){
+        let button = "";
+        for (let i = 0; i < nationList.length; i++){
+            button += `<button class="buttonFilter" onclick="tablePicture('${nationList[i]}')">${nationList[i]}</button>`
+        }
+        document.getElementById("filterNation").innerHTML = button;
+    }
+    builtButton();
+    tablePicture("");
+
+
+function tablePicture(text){
+    let width = 400;
+    let height = 350;
+    let data = "";
+    let listImg = [];
+    if (text != "") {
+        for (let i = 0; i < totalImg.length; i++) {
+            if (text == totalImg[i].getNation()) {
+                listImg.push(totalImg[i]);
+            }
+        }
+    }else {
+        listImg = totalImg;
+    }
+    for (let i = 0; i < listImg.length; i++){
+        if (i%4 == 0){
+            data += `<tr>`;
+        }
+
+        data += `<td class="picBox"">
+                    <table style="height: ${height}px;width: 100%" onclick="getInfoArrImg('${listImg[i].getLink()}')">
+                        <tr><td style="vertical-align: top"><img class="picInBox" src="img_smart/${listImg[i].getLink()}" width="${width}px"></td></tr>
+                        <tr style="vertical-align: bottom"><td style="vertical-align: bottom; text-align: left"><p id="pictureDescription-${i}" style="font-family: fontCustom, sans-serif" class="textDecription"></p></td></tr>
+                    </table>
+                 </td>`;
+
+        if (i%4 == 3 || i == listImg.length - 1){
+            data += `</tr>`;
+        }
+    }
+    document.getElementById("tablePicture").innerHTML = data;
+
+    for (let i = 0; i < listImg.length; i++){
+        let dataDes = "";
+            dataDes += "- " + listImg[i].getNation() + "<br>";
+            dataDes += "- " + listImg[i].getCity() + "<br>";
+        document.getElementById("pictureDescription-" + i).innerHTML = dataDes;
+    }
+}
+function zoomPicture(link){
+    width = window.innerWidth - 160
+    height = window.innerHeight - 140
+    elementDiv = document.getElementById("zoomPicture");
+    elementDiv.style.display = "block";
+    let pngLink = changePng(link);
+
+    data = `<img id="pictureFix" src="img/${pngLink}">
+            <img onclick="closeZoomPicture()" id="closeZoom" style="position: fixed; top: 5%; left: 95%" src="symbol/close.png" height="48" width="48"/>
+            <img onclick="movePicture(-1, '${link}')" id="backPic" style="position: fixed; top: 50%; left: 2%" src="symbol/back.png" height="48" width="48"/>
+            <img onclick="movePicture(1, '${link}')" id="forwardPic" style="position: fixed; top: 50%; left: 96%" src="symbol/forward.png" height="48" width="48"/>`
+
+    let ele = document.getElementById("zoomPicture");
+    ele.innerHTML = data;
+    ele.style.width = width;
+    ele.style.height = height;
+}
+function closeZoomPicture(){
+    elementDiv = document.getElementById("zoomPicture");
+    elementDiv.style.display = "none";
+}
+function changePng(test){
+    let newLink = "";
+    for (let i = 0; i < test.length - 4; i++){
+        newLink += test[i];
+    }
+    return newLink + "png"
+}
+function movePicture(step, link){
+    let index = -1;
+    let i;
+    for (i = 0; i < arrImg.length; i++){
+        index = arrImg[i].indexOf(link);
+        if (index != -1){
+            break;
+        }
+    }
+    let newIndex = index + step;
+    if(newIndex < 0 || newIndex > arrImg[i].length){
+        newIndex = index;
+    }
+    let newLink = arrImg[i][newIndex];
+    // alert(index)
+    zoomPicture(newLink);
+}
+</script>
+</body>
+</html>
